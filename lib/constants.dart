@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
-const myAppBarText = TextStyle(
+const kAppBarText = TextStyle(
   color: Colors.white,
-  fontWeight: FontWeight.w400,
+  fontWeight: FontWeight.w200,
+  //fontStyle: FontStyle.italic,
+  fontFamily: "Montserrat"
+);
+
+const kButtonText = TextStyle(
+  color: Colors.black,
+  fontWeight: FontWeight.w600,
+  fontFamily: "Montserrat"
 );

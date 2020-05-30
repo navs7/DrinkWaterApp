@@ -1,7 +1,6 @@
 import 'package:drink_water/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
@@ -13,7 +12,6 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   FlutterLocalNotificationsPlugin myLocalNotificationPlugin;
-  TextEditingController valueInputController = new TextEditingController();
 
   File jsonFile;
   Directory dir;
@@ -21,6 +19,7 @@ class _InputPageState extends State<InputPage> {
   bool fileExists = false;
   Map<String, dynamic> fileContent;
   int waterConsumed = 0;
+  double barHeight = 0;
 
   @override
   void initState() {
@@ -54,12 +53,6 @@ class _InputPageState extends State<InputPage> {
   //     },
   //   );
   // }
-
-  @override
-  void dispose() {
-    valueInputController.dispose();
-    super.dispose();
-  }
 
   void createFile(
       Map<String, dynamic> content, Directory dir, String fileName) {
@@ -135,88 +128,85 @@ class _InputPageState extends State<InputPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Drink Water Reminder",
-          style: myAppBarText,
-        ),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        //crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            waterConsumed.toString(),
-            style: new TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 50.0,
-              color: Colors.black,
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 50.0,
             ),
-          ),
-          Padding(
-            padding: new EdgeInsets.only(top: 10.0),
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: FlatButton(
-                    onPressed: () {
-                      //_showNotificationWithDefaultSound();
-                      showNotification();
-                    },
-                    child: Text("Notify me"),
-                    color: Color(0x505AA6EB),
+            AnimatedContainer(
+              duration: Duration(seconds: 3),
+              width: 60.0,
+              height: barHeight,
+              color: Color(0xff7CD2F5),
+            ),
+            SizedBox(
+              height: 50.0,
+            ),
+            Container(
+              color: Colors.grey,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    waterConsumed.toString(),
+                    style: new TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 50.0,
+                      //color: Colors.black,
+                    ),
                   ),
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: FlatButton(
-                    onPressed: () {
-                      writeToFile(
-                          DateTime.now().toString(), "200");
-                      readFile();
-                    },
-                    child: Text("200 ml water"),
-                    color: Color(0x505AA6EB),
+                  Padding(
+                    padding: new EdgeInsets.only(top: 10.0),
                   ),
-                ),
+                  Row(
+                    //mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: FlatButton(
+                            onPressed: () {
+                              //_showNotificationWithDefaultSound();
+                              showNotification();
+                            },
+                            child: Text(
+                              "Notify me",
+                              style: kButtonText,
+                            ),
+                            color: Color(0x505AA6EB),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: FlatButton(
+                            onPressed: () {
+                              writeToFile(DateTime.now().toString(), "200");
+                              readFile();
+                              setState(() {
+                                barHeight = barHeight + 10;
+                              });
+                            },
+                            child: Text(
+                              "200 ml water",
+                              style: kButtonText,
+                            ),
+                            color: Color(0x505AA6EB),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
-      bottomNavigationBar: MyNavbar(),
-    );
-  }
-}
-
-class MyNavbar extends StatelessWidget {
-  const MyNavbar({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(FontAwesomeIcons.fillDrip),
-          title: new Text("Home"),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(FontAwesomeIcons.history),
-          title: new Text("History"),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(FontAwesomeIcons.screwdriver),
-          title: new Text("Settings"),
-        ),
-      ],
     );
   }
 }
